@@ -1,9 +1,8 @@
 package com.example.frisrplus
 
 data class User(
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val phoneNumber: Int
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val email: String? = null,
+    val phoneNumber: Int? = null
 )
-
