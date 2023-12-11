@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "878559873609",
+    "project_id": "frisor-plus",
+    "storage_bucket": "frisor-plus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878559873609:android:1821c0f90ce60fde8f4d98",
+        "android_client_info": {
+          "package_name": "com.example.frisrplus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkRp-HlI--W4VqZ-TOBXKl026W4IEkiIg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
