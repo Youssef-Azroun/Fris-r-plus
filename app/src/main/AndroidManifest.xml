@@ -13,6 +13,21 @@
         android:theme="@style/Theme.FrisörPlus"
         tools:targetApi="31">
         <activity
+            android:name=".BookServices"
+            android:exported="false" />
+        <activity
+            android:name=".OwnerAccount"
+            android:exported="false" />
+        <activity
+            android:name=".CustomerAccount"
+            android:exported="false" />
+        <activity
+            android:name=".CreateAccount"
+            android:exported="false" />
+        <activity
+            android:name=".LogIn"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
