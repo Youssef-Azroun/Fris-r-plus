@@ -53,16 +53,22 @@ class CreateAccount : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val firebaseUser = auth.currentUser
 
-                    // User registered successfully
-                    val user = User(firstName, lastName, email, phoneNumber)
+                    // Send email verification
+                    firebaseUser?.sendEmailVerification()
+                        ?.addOnCompleteListener { verificationTask ->
+                            if (verificationTask.isSuccessful) {
+                                showToast("Konto skapat. Verifierings-e-post har skickats.")
+                            } else {
+                                showToast("Konto skapat, men fel vid skickande av verifierings-e-post.")
+                            }
+                        }
 
-                    // Save user data to Firestore with UID
+                    // Continue with the rest of your code...
+                    val user = User(firstName, lastName, email, phoneNumber)
                     saveUserToFirestore(user, firebaseUser?.uid)
 
-                    showToast("Konto skapat framgångsrikt")
-
                     // Redirect to MainActivity
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, LogIn::class.java))
 
                     // Finish the current activity to prevent the user from coming back to the registration screen
                     finish()
@@ -74,6 +80,7 @@ class CreateAccount : AppCompatActivity() {
                 }
             }
     }
+
 
 
     private fun saveUserToFirestore(user: User, uid: String?) {
