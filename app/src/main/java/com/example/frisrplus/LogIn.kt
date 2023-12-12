@@ -26,7 +26,7 @@ class LogIn : AppCompatActivity() {
         // Display a message with login and registration information
         val messageTextView: TextView = findViewById(R.id.textViewMessage)
         messageTextView.text =
-            "Logga in om du redan har ett konto, annars klicka på Registrera för att skapa ett."
+            "Logga in om du har ett konto om du inte har ett konto klicka på registrera för att skapa ett konto."
     }
 
     private fun setupLoginAndRegisterButtons() {
