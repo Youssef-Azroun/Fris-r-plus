@@ -57,7 +57,7 @@ class LogIn : AppCompatActivity() {
         val lowercaseEmail = email.toLowerCase()
 
         // Check if the user is logging in with the specified credentials
-        if (lowercaseEmail == "frisorplus.admin@gmail.com" && password == "12345678") {
+        if (lowercaseEmail == "frisorplus@gmail.com" && password == "adminfp4312") {
             // Navigate to OwnerAccount activity
             startActivity(Intent(this, OwnerAccount::class.java))
             // Finish the current activity to prevent the user from coming back to the login screen
