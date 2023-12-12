@@ -69,20 +69,27 @@ class LogIn : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Login successful
-                    showToast("Inloggning lyckades.")
+                    val user = auth.currentUser
+                    if (user != null && user.isEmailVerified) {
+                        // Login successful and email is verified
+                        showToast("Inloggning lyckades.")
 
-                    // Redirect to MainActivity
-                    startActivity(Intent(this, MainActivity::class.java))
+                        // Redirect to MainActivity
+                        startActivity(Intent(this, MainActivity::class.java))
 
-                    // Finish the current activity to prevent the user from coming back to the login screen
-                    finish()
+                        // Finish the current activity to prevent the user from coming back to the login screen
+                        finish()
+                    } else {
+                        // If the user is not verified, show a message
+                        showToast("Var god verifiera din e-post innan du loggar in.")
+                    }
                 } else {
                     // If login fails, display a message to the user.
                     handleLoginFailure(task.exception)
                 }
             }
     }
+
 
 
 
