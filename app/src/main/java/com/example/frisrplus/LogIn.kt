@@ -53,7 +53,19 @@ class LogIn : AppCompatActivity() {
     }
 
     private fun loginUser(email: String, password: String) {
-        // Firebase Authentication
+        // Convert the provided email to lowercase for case-insensitive comparison
+        val lowercaseEmail = email.toLowerCase()
+
+        // Check if the user is logging in with the specified credentials
+        if (lowercaseEmail == "frisorplus.admin@gmail.com" && password == "12345678") {
+            // Navigate to OwnerAccount activity
+            startActivity(Intent(this, OwnerAccount::class.java))
+            // Finish the current activity to prevent the user from coming back to the login screen
+            finish()
+            return
+        }
+
+        // For other logins, proceed with Firebase Authentication
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -71,6 +83,7 @@ class LogIn : AppCompatActivity() {
                 }
             }
     }
+
 
 
     private fun handleLoginFailure(exception: Exception?) {
