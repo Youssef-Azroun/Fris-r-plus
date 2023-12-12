@@ -41,7 +41,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:background="@color/light_gray"
-        android:drawableLeft="@drawable/round_assignment_late_24"
+        android:drawableLeft="@drawable/baseline_error_24"
         android:drawablePadding="10dp"
         android:ems="10"
         android:hint="Lösenord"
