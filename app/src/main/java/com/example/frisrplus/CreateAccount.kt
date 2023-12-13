@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,6 +24,7 @@ class CreateAccount : AppCompatActivity() {
 
         val registerButton: Button = findViewById(R.id.buttonRegister)
         registerButton.setOnClickListener {
+            showVerificationAlert()
             registerUser()
         }
     }
@@ -47,38 +49,44 @@ class CreateAccount : AppCompatActivity() {
             return
         }
 
-        // Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val firebaseUser = auth.currentUser
 
-                    // Send email verification
-                    firebaseUser?.sendEmailVerification()
-                        ?.addOnCompleteListener { verificationTask ->
-                            if (verificationTask.isSuccessful) {
-                                showToast("Konto skapat. Verifierings-e-post har skickats.")
-                            } else {
-                                showToast("Konto skapat, men fel vid skickande av verifierings-e-post.")
-                            }
-                        }
+                    sendValidationLink()
 
                     // Continue with the rest of your code...
                     val user = User(firstName, lastName, email, phoneNumber)
                     saveUserToFirestore(user, firebaseUser?.uid)
 
-                    // Redirect to MainActivity
-                    startActivity(Intent(this, LogIn::class.java))
-
-                    // Finish the current activity to prevent the user from coming back to the registration screen
-                    finish()
                 } else {
                     // If registration fails, display a message to the user.
-                    // You can handle specific failure cases here.
                     val errorMessage = task.exception?.message ?: "Registrering misslyckades"
                     showToast(errorMessage)
                 }
             }
+    }
+
+    private fun showVerificationAlert() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Bekräftelse")
+            .setMessage("Vi har skickat en bekräftelse till din e-post. Om du inte har fått det, Tryck på skicka igen. vänligen kontrollera om du har angett rätt e-postadress.")
+            .setCancelable(false)
+            .setPositiveButton("OK") { dialog, _ ->
+                // Continue with your code or navigate to the login screen
+                startActivity(Intent(this, LogIn::class.java))
+                finish()
+                dialog.dismiss()
+            }
+            .setNegativeButton("skicka igen") { dialog, _ ->
+                // Handle cancel button click if needed
+                sendValidationLink()
+                dialog.dismiss()
+            }
+
+        val alert: AlertDialog = builder.create()
+        alert.show()
     }
 
 
@@ -98,6 +106,19 @@ class CreateAccount : AppCompatActivity() {
                     showToast("Fel vid sparande av användardata")
                 }
         }
+    }
+
+    private fun sendValidationLink() {
+        val firebaseUser = auth.currentUser
+
+        firebaseUser?.sendEmailVerification()
+            ?.addOnCompleteListener { verificationTask ->
+                if (verificationTask.isSuccessful) {
+
+                } else {
+                    showToast("Konto skapat, men fel vid skickande av verifierings-e-post.")
+                }
+            }
     }
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
