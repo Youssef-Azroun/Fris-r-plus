@@ -21,9 +21,10 @@ class MainActivity : AppCompatActivity() {
             "frisorplus.admin@gmail.com"
 
 
-        val testButton: Button = findViewById(R.id.buttonToSignIn)
-        testButton.setOnClickListener {
-
+        val goToLoggInTextView: TextView = findViewById(R.id.goToLoggIntextView)
+        goToLoggInTextView.text =
+            "Logga in"
+        goToLoggInTextView.setOnClickListener {
             startActivity(Intent(this, LogIn::class.java))
         }
     }
