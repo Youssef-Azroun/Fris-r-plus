@@ -38,6 +38,8 @@ class CreateAccount : AppCompatActivity() {
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || phoneNumberText.isEmpty()) {
             showToast("Vänligen fyll i alla fält")
             return
+        }else{
+            showVerificationAlert()
         }
 
         // Validate and convert the phone number
