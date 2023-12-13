@@ -24,7 +24,6 @@ class CreateAccount : AppCompatActivity() {
 
         val registerButton: Button = findViewById(R.id.buttonRegister)
         registerButton.setOnClickListener {
-            showVerificationAlert()
             registerUser()
         }
     }
@@ -54,12 +53,17 @@ class CreateAccount : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val firebaseUser = auth.currentUser
 
-                    sendValidationLink()
-
-                    // Continue with the rest of your code...
-                    val user = User(firstName, lastName, email, phoneNumber)
-                    saveUserToFirestore(user, firebaseUser?.uid)
-
+                    firebaseUser?.sendEmailVerification()
+                        ?.addOnCompleteListener { verificationTask ->
+                            if (verificationTask.isSuccessful) {
+                                // Continue with the rest of your code...
+                                val user = User(firstName, lastName, email, phoneNumber)
+                                saveUserToFirestore(user, firebaseUser.uid)
+                                showVerificationAlert()
+                            } else {
+                                showToast("Konto skapat, men fel vid skickande av verifierings-e-post.")
+                            }
+                        }
                 } else {
                     // If registration fails, display a message to the user.
                     val errorMessage = task.exception?.message ?: "Registrering misslyckades"
@@ -68,10 +72,11 @@ class CreateAccount : AppCompatActivity() {
             }
     }
 
+
     private fun showVerificationAlert() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Bekräftelse")
-            .setMessage("Vi har skickat en bekräftelse till din e-post. Om du inte har fått det, Tryck på skicka igen. vänligen kontrollera om du har angett rätt e-postadress.")
+            .setMessage("Vi har skickat en bekräftelse till din e-post. Om du inte har fått det, Tryck på Avbryt. vänligen kontrollera om du har angett rätt e-postadress. Om du har fått bekräftelse tryck okej för att gå vidare")
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 // Continue with your code or navigate to the login screen
@@ -79,9 +84,8 @@ class CreateAccount : AppCompatActivity() {
                 finish()
                 dialog.dismiss()
             }
-            .setNegativeButton("skicka igen") { dialog, _ ->
+            .setNegativeButton("Avbryt") { dialog, _ ->
                 // Handle cancel button click if needed
-                sendValidationLink()
                 dialog.dismiss()
             }
 
@@ -106,19 +110,6 @@ class CreateAccount : AppCompatActivity() {
                     showToast("Fel vid sparande av användardata")
                 }
         }
-    }
-
-    private fun sendValidationLink() {
-        val firebaseUser = auth.currentUser
-
-        firebaseUser?.sendEmailVerification()
-            ?.addOnCompleteListener { verificationTask ->
-                if (verificationTask.isSuccessful) {
-
-                } else {
-                    showToast("Konto skapat, men fel vid skickande av verifierings-e-post.")
-                }
-            }
     }
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
