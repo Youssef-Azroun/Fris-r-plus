@@ -3,6 +3,7 @@
     <style name="Base.Theme.FrisörPlus" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">?attr/colorControlNormal</item>
     </style>
 
     <style name="Theme.FrisörPlus" parent="Base.Theme.FrisörPlus" />
