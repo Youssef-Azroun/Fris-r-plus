@@ -2,7 +2,7 @@ package com.example.frisrplus
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -19,8 +19,8 @@ class CustomerAccount : AppCompatActivity() {
         // Set up other UI elements in your CustomerAccount activity
 
         // Set up logout button
-        val logoutButton = findViewById<Button>(R.id.logoutButton)
-        logoutButton.setOnClickListener {
+        val logOutTextView: TextView = findViewById(R.id.logOutTextView)
+        logOutTextView.setOnClickListener {
             // Call the logout function
             logout()
         }
@@ -31,7 +31,7 @@ class CustomerAccount : AppCompatActivity() {
         auth.signOut()
 
         // Redirect to the login activity after logout
-        startActivity(Intent(this, LogIn::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
 
         // Finish the current activity to prevent the user from coming back to the logged-in state
         finish()
