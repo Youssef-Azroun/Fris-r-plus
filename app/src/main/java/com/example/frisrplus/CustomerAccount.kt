@@ -30,10 +30,13 @@ class CustomerAccount : AppCompatActivity() {
         // Log out the user using Firebase Authentication
         auth.signOut()
 
-        // Redirect to the login activity after logout
-        startActivity(Intent(this, MainActivity::class.java))
+        // Redirect to the login activity after logout and clear the back stack
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
 
         // Finish the current activity to prevent the user from coming back to the logged-in state
         finish()
     }
+D
 }
