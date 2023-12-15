@@ -38,5 +38,4 @@ class CustomerAccount : AppCompatActivity() {
         // Finish the current activity to prevent the user from coming back to the logged-in state
         finish()
     }
-D
 }
