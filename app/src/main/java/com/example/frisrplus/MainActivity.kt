@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 // User is not logged in, go to login activity
                 startActivity(Intent(this, LogIn::class.java))
             } else {
-                // User is logged in, go to account activity or perform your desired action
+                // User is logged in, go to customer account activity
                 startActivity(Intent(this, CustomerAccount::class.java))
             }
         }

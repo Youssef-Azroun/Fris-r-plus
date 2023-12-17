@@ -58,7 +58,7 @@ class CreateAccount : AppCompatActivity() {
                     firebaseUser?.sendEmailVerification()
                         ?.addOnCompleteListener { verificationTask ->
                             if (verificationTask.isSuccessful) {
-                                // Continue with the rest of your code...
+
                                 val user = User(firstName, lastName, email, phoneNumber)
                                 saveUserToFirestore(user, firebaseUser.uid)
                                 showVerificationAlert()
@@ -81,13 +81,13 @@ class CreateAccount : AppCompatActivity() {
             .setMessage("Vi har skickat en bekräftelse till din e-post. Om du inte har fått det, Tryck på Avbryt. vänligen kontrollera om du har angett rätt e-postadress. Om du har fått bekräftelse tryck okej för att gå vidare")
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
-                // Continue with your code or navigate to the login screen
+                // navigate to the login screen
                 startActivity(Intent(this, LogIn::class.java))
                 finish()
                 dialog.dismiss()
             }
             .setNegativeButton("Avbryt") { dialog, _ ->
-                // Handle cancel button click if needed
+
                 dialog.dismiss()
             }
 
@@ -105,7 +105,7 @@ class CreateAccount : AppCompatActivity() {
                 .set(user)
                 .addOnSuccessListener {
                     // User data saved to Firestore successfully
-                    // You can perform additional actions here if needed
+
                 }
                 .addOnFailureListener { e ->
                     // Handle errors while saving user data to Firestore
