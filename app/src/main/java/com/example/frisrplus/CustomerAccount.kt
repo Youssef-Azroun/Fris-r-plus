@@ -16,7 +16,7 @@ class CustomerAccount : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Set up other UI elements in your CustomerAccount activity
+
 
         // Set up logout button
         val logOutTextView: TextView = findViewById(R.id.logOutTextView)
