@@ -1,17 +1,16 @@
 package com.example.frisrplus
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
 
@@ -45,6 +44,12 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         phoneNumberTextView = findViewById(R.id.phoneNumberTextView)
         selectedDateTextView = findViewById(R.id.selectedDateTextView)
 
+        // Retrieve the selected date from the intent
+        val selectedDate: Long = intent.getLongExtra("selectedDate", 0L)
+
+        // Update the selectedDateTextView with the formatted date
+        selectedDateTextView.text = "Selected Date: ${formatDate(selectedDate)}"
+
         // Update your UI elements with the information
         val typeOfCutTextView: TextView = findViewById(R.id.typeOfCutTextView)
         val priceTextView: TextView = findViewById(R.id.priceTextView)
@@ -53,9 +58,6 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         typeOfCutTextView.text = typeOfCut
         priceTextView.text = price
         selectedTimeTextView.text = selectedTime
-
-        val selectedDate: Long = intent.getLongExtra("selectedDate", 0L)
-        selectedDateTextView.text = "Selected Date: ${formatDate(selectedDate)}"
 
         bokaButton = findViewById(R.id.bokaButton)
 
@@ -78,7 +80,6 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date(dateInMillis))
     }
-
     private fun saveBookingToFirestore() {
         val currentUser = auth.currentUser
 
