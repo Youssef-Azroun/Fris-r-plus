@@ -23,6 +23,7 @@ class ServicesRecycleAdapter (val context: Context, val services : List<Services
         return services.size
     }
 
+    // Inside onBindViewHolder method in ServicesRecycleAdapter
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val services = services[position]
 
@@ -30,13 +31,19 @@ class ServicesRecycleAdapter (val context: Context, val services : List<Services
         holder.priceTextView.text = services.price
 
         // Set OnClickListener for the "Boka" button
+        // Inside onBindViewHolder method in ServicesRecycleAdapter
         holder.bookingButton.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, DayAndTimeForBookingAvailableActivity::class.java)
-            // You may want to pass some data to DayAndTimeForBookingAvailableActivity using intent.putExtra if needed
+
+            // Pass individual properties to DayAndTimeForBookingAvailableActivity
+            intent.putExtra("typeOfCut", services.servicedName)
+            intent.putExtra("price", services.price)
+
             context.startActivity(intent)
         }
     }
+
 
 
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
