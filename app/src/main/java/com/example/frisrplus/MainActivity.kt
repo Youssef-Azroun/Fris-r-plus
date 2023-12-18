@@ -14,14 +14,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
-    var services = mutableListOf<Services>(
-                                 Services("Barn klippning", "100kr."),
-                                 Services("Pensionär klippning", "100kr."),
-                                 Services("Vuxen hår klippning", " från 100kr."),
-                                 Services("Vuxen skägg klippning", "från 70kr."),
-                                 Services("Hår+Skägg klippning", "från 150kr.")
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,19 +23,12 @@ class MainActivity : AppCompatActivity() {
         // Check the user's login status
         updateLoginStatus()
 
-
         var recyclerView = findViewById<RecyclerView>(R.id.servicesRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val adapter = ServicesRecycleAdapter(this, services)
+        val adapter = ServicesRecycleAdapter(this, servicesDataManager.services)
         recyclerView.adapter = adapter
 
-        val adressTextView: TextView = findViewById(R.id.adressTextView)
-        adressTextView.text =
-            "Carl Krooks Gata 6, \n" + "252 25 Helsingborg"
-        val mailTextView: TextView = findViewById(R.id.mailTextView)
-        mailTextView.text =
-            "frisorplus.admin@gmail.com"
 
         val goToLoggInTextView: TextView = findViewById(R.id.goToLoggIntextView)
         goToLoggInTextView.setOnClickListener {

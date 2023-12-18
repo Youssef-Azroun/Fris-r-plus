@@ -60,7 +60,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
         android:fontFamily="@font/inria_sans_light"
-        android:text="Info text"
+        android:text="@string/message_textView"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold"
