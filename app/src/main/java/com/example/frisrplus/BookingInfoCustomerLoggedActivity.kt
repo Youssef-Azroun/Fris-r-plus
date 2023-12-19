@@ -99,7 +99,7 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
                     if (documentSnapshot.exists()) {
                         val user = documentSnapshot.toObject(User::class.java)
                         if (user != null) {
-                            // Create a data map with both user and booking information
+                            // Create a data map with booking information
                             val bookingData = hashMapOf(
                                 "typeOfCut" to typeOfCut,
                                 "price" to price,
@@ -111,16 +111,24 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
                                 "phoneNumber" to user.phoneNumber
                             )
 
-                            // Save the booking data to Firestore
-                            firestore.collection("Bookings")
+                            // Save the booking data to the user-specific collection
+                            firestore.collection("UsersBookings")
                                 .document(uid)
                                 .collection("UserBookings")
-                                .add(bookingData) // Use add instead of set
+                                .add(bookingData)
                                 .addOnSuccessListener {
-                                    showToast("Booking information saved successfully")
+                                    // Save the booking data to the AllBookings collection
+                                    firestore.collection("AllBookings")
+                                        .add(bookingData)
+                                        .addOnSuccessListener {
+                                            showToast("Booking information saved successfully")
+                                        }
+                                        .addOnFailureListener { e ->
+                                            showToast("Error saving booking information to AllBookings: ${e.message}")
+                                        }
                                 }
                                 .addOnFailureListener { e ->
-                                    showToast("Error saving booking information: ${e.message}")
+                                    showToast("Error saving booking information to UserBookings: ${e.message}")
                                 }
                         }
                     }
@@ -130,6 +138,8 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
                 }
         }
     }
+
+
 
 
 
