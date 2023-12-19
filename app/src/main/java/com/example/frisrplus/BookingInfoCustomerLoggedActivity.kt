@@ -20,7 +20,6 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
     // Declare TextView variables here
     private lateinit var userEmailTextView: TextView
     private lateinit var firstNameTextView: TextView
-    private lateinit var lastNameTextView: TextView
     private lateinit var phoneNumberTextView: TextView
     private lateinit var selectedDateTextView: TextView
     private lateinit var bokaButton: Button
@@ -40,7 +39,6 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         // Initialize TextView variables
         userEmailTextView = findViewById(R.id.userEmailTextView)
         firstNameTextView = findViewById(R.id.firstNameTextView)
-        lastNameTextView = findViewById(R.id.lastNameTextView)
         phoneNumberTextView = findViewById(R.id.phoneNumberTextView)
         selectedDateTextView = findViewById(R.id.selectedDateTextView)
 
@@ -149,9 +147,8 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
                         val user = documentSnapshot.toObject(User::class.java)
                         if (user != null) {
                             userEmailTextView.text = "Email: ${user.email}"
-                            firstNameTextView.text = "First Name: ${user.firstName}"
-                            lastNameTextView.text = "Last Name: ${user.lastName}"
-                            phoneNumberTextView.text = "Phone Number: ${user.phoneNumber}"
+                            firstNameTextView.text = "Name: ${user.firstName} ${user.lastName}"
+                            phoneNumberTextView.text = "Phone Number: 0${user.phoneNumber}"
                         }
                     }
                 }

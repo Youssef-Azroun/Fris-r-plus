@@ -58,10 +58,10 @@
 
     <TextView
         android:id="@+id/textViewMyname"
-        android:layout_width="378dp"
+        android:layout_width="374dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:background="#9C737373"
+        android:background="@color/transparent_gray"
         android:elegantTextHeight="true"
         android:padding="15dp"
         android:text="Förname + Eftername"
