@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
@@ -14,35 +16,14 @@ import com.google.firebase.ktx.Firebase
 class CustomerAccount : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-
-    val userList = mutableListOf<User>()
-
-    lateinit var currentUser: FirebaseUser
-
+    private lateinit var currentUser: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_customer_account)
 
-        val db = Firebase.firestore
-        val docRef = db.collection("Users")
-
         auth = FirebaseAuth.getInstance()
-
         currentUser = auth.currentUser!!
-
-        docRef.addSnapshotListener { snapshot , e ->
-            if (snapshot != null){
-                userList.clear()
-                for (document in snapshot.documents){
-                    val item = document.toObject<User>()
-                    if (item != null){
-                        userList.add(item)
-                    }
-                }
-            }
-            printUserList()
-        }
 
         // Set up logout button
         val logOutTextView: TextView = findViewById(R.id.logOutTextView)
@@ -50,7 +31,12 @@ class CustomerAccount : AppCompatActivity() {
             // Call the logout function
             logout()
         }
+
+        // Get user information
         getUserInformation(currentUser.uid)
+
+        // Call the function to get user bookings
+        getUserBookings(currentUser.uid)
     }
 
     private fun getUserInformation(uid: String) {
@@ -61,16 +47,43 @@ class CustomerAccount : AppCompatActivity() {
             if (document.exists()) {
                 val user = document.toObject<User>()
                 if (user != null) {
-                    // Visa den specifika informationen om den inloggade användaren
+                    // Display the specific information about the logged-in user
                     val userNameTextView: TextView = findViewById(R.id.textViewMyname)
                     userNameTextView.text = "${user.firstName} ${user.lastName}\n\n${user.email}\n\n0${user.phoneNumber}"
                 }
             } else {
-                Log.d("!!!", "Användardokumentet finns inte")
+                Log.d("!!!", "User document does not exist")
             }
         }.addOnFailureListener { e ->
-            Log.e("!!!", "Fel vid hämtning av användardata: $e")
+            Log.e("!!!", "Error fetching user data: $e")
         }
+    }
+
+    private fun getUserBookings(uid: String) {
+        val db = Firebase.firestore
+        val bookingsRef = db.collection("UsersBookings").document(uid).collection("UserBookings")
+
+        bookingsRef.addSnapshotListener { snapshot, e ->
+            if (snapshot != null) {
+                val userBookings = mutableListOf<UserBooking>()
+                for (document in snapshot.documents) {
+                    val booking = document.toObject<UserBooking>()
+                    if (booking != null) {
+                        userBookings.add(booking)
+                    }
+                }
+                // Update the RecyclerView with the new data
+                updateRecyclerView(userBookings)
+            }
+        }
+    }
+
+    private fun updateRecyclerView(userBookings: List<UserBooking>) {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val adapter = CustomerBookingRecycleAdapter(this, userBookings)
+        recyclerView.adapter = adapter
+        // You may also want to set a layout manager, e.g., LinearLayoutManager
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun logout() {
@@ -84,11 +97,5 @@ class CustomerAccount : AppCompatActivity() {
 
         // Finish the current activity to prevent the user from coming back to the logged-in state
         finish()
-    }
-
-    fun printUserList() {
-        for (item in userList){
-            Log.d("!!!", "${item.firstName}")
-        }
     }
 }
