@@ -91,6 +91,12 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
             // Convert the selectedDateMillis to a formatted date string
             val selectedDateString = formatDate(selectedDateMillis)
 
+            // Create a unique document ID
+            val bookingDocumentId = firestore.collection("UsersBookings")
+                .document(uid)
+                .collection("UserBookings")
+                .document().id
+
             // Fetch user information from Firestore
             firestore.collection("Users")
                 .document(uid)
@@ -111,15 +117,17 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
                                 "phoneNumber" to user.phoneNumber
                             )
 
-                            // Save the booking data to the user-specific collection
+                            // Save the booking data to the user-specific collection with the unique document ID
                             firestore.collection("UsersBookings")
                                 .document(uid)
                                 .collection("UserBookings")
-                                .add(bookingData)
+                                .document(bookingDocumentId)
+                                .set(bookingData)
                                 .addOnSuccessListener {
-                                    // Save the booking data to the AllBookings collection
+                                    // Save the booking data to the AllBookings collection with the same document ID
                                     firestore.collection("AllBookings")
-                                        .add(bookingData)
+                                        .document(bookingDocumentId)
+                                        .set(bookingData)
                                         .addOnSuccessListener {
                                             showToast("Booking information saved successfully")
                                         }
