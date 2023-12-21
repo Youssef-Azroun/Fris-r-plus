@@ -3,6 +3,7 @@ package com.example.frisrplus
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +31,12 @@ class CustomerAccount : AppCompatActivity() {
         logOutTextView.setOnClickListener {
             // Call the logout function
             logout()
+        }
+
+        //set up cancel button
+        val cancelButton: Button = findViewById(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+
         }
 
         // Get user information
