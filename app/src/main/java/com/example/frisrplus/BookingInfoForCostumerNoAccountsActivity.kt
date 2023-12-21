@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,10 +25,10 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
 
 
         // Find TextView elements in your layout
-        val typeOfCutTextView: TextView = findViewById(R.id.textView3)
-        val priceTextView: TextView = findViewById(R.id.textView4)
-        val selectedTimeTextView: TextView = findViewById(R.id.textView5)
-        val selectedDateTextView: TextView = findViewById(R.id.textView14)
+        val typeOfCutTextView: TextView = findViewById(R.id.textViewTypeOfCut)
+        val priceTextView: TextView = findViewById(R.id.textViewPrice)
+        val selectedTimeTextView: TextView = findViewById(R.id.textViewSelectedTime)
+        val selectedDateTextView: TextView = findViewById(R.id.textViewSelectedDate)
 
         // Retrieve information from the intent
         val typeOfCut: String? = intent.getStringExtra("typeOfCut")
@@ -52,6 +53,23 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
             val number: String = numberEditText.text.toString()
             val email: String = emailEditText.text.toString()
 
+            if (firstName.isEmpty() || lastName.isEmpty() || number.isEmpty() || email.isEmpty()) {
+                showToast("Vänligen fyll i alla fält")
+                return@setOnClickListener
+            }
+
+            // Validate number (should contain only digits)
+            if (!isNumeric(number) || number.length != 10) {
+                numberEditText.error = "Vänligen ange rätt telefonnummer med 10 siffor bara!"
+                return@setOnClickListener
+            }
+
+            // Validate email
+            if (!isValidEmail(email)) {
+                emailEditText.error = "Vänligen ange rätt E-postadress"
+                return@setOnClickListener
+            }
+
             // Create an Intent to start BookingConfirmationActivity
             val intent = Intent(this, BookingConfirmationActivity::class.java)
 
@@ -75,5 +93,19 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
         // For demonstration purposes, we'll use a basic format here
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date(dateInMillis))
+    }
+
+    // Function to check if a string contains only digits
+    private fun isNumeric(str: String): Boolean {
+        return str.matches("-?\\d+".toRegex())
+    }
+
+    // Function to check if a string is a valid email address
+    private fun isValidEmail(email: String): Boolean {
+        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+        return email.matches(emailPattern.toRegex())
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
