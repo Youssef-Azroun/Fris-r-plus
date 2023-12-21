@@ -54,12 +54,6 @@
                 android:layout_width="207dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/black"
-                android:text="9:00" />
-
-            <Button
-                android:layout_width="207dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/black"
                 android:text="9:30" />
 
             <Button

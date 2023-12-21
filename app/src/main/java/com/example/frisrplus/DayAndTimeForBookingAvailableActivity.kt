@@ -3,6 +3,7 @@ package com.example.frisrplus
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.LinearLayout
@@ -14,6 +15,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import com.google.firebase.firestore.DocumentChange
+
 
 class DayAndTimeForBookingAvailableActivity : AppCompatActivity() {
     private var typeOfCut: String? = null
@@ -53,20 +56,50 @@ class DayAndTimeForBookingAvailableActivity : AppCompatActivity() {
             }
         }
 
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            // Store the selected date when the user interacts with the calendar
-            selectedDate = Calendar.getInstance().apply {
-                set(Calendar.YEAR, year)
-                set(Calendar.MONTH, month)
-                set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            }.timeInMillis
-
-            // Fetch all booked time slots for the selected date and update UI
-            fetchBookedTimeSlots(selectedDate, buttonContainer)
-        }
+        // Inside the onCreate method, after setting the minimum date for the calendar view
+        calendarView.minDate = Calendar.getInstance().timeInMillis
 
         // Fetch all booked time slots for the initial selected date and update UI
         fetchBookedTimeSlots(selectedDate, buttonContainer)
+
+        // Add a listener to the Firestore collection to update UI when changes occur
+        listenForBookingChanges(selectedDate, buttonContainer)
+
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val selectedDate = Calendar.getInstance().apply {
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            }
+
+            // Reset visibility for all buttons
+            for (i in 0 until buttonContainer.childCount) {
+                buttonContainer.getChildAt(i).visibility = View.VISIBLE
+            }
+
+            // Check if the selected date is a Sunday
+            if (isSunday(selectedDate.timeInMillis)) {
+                showToast("Barber shop is closed.")
+
+                // Hide all buttons under the calendar
+                for (i in 0 until buttonContainer.childCount) {
+                    buttonContainer.getChildAt(i).visibility = View.GONE
+                }
+            } else {
+                // Update the selected date and fetch booked time slots
+                this@DayAndTimeForBookingAvailableActivity.selectedDate = selectedDate.timeInMillis
+                fetchBookedTimeSlots(this@DayAndTimeForBookingAvailableActivity.selectedDate, buttonContainer)
+
+                // Check if the selected date is a Saturday
+                if (isSaturday(selectedDate.timeInMillis)) {
+                    // Hide the first button and the last five buttons
+                    buttonContainer.getChildAt(0).visibility = View.GONE
+                    for (i in buttonContainer.childCount - 5 until buttonContainer.childCount) {
+                        buttonContainer.getChildAt(i).visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     private fun fetchBookedTimeSlots(selectedDate: Long, buttonContainer: LinearLayout) {
@@ -124,7 +157,6 @@ class DayAndTimeForBookingAvailableActivity : AppCompatActivity() {
             }
     }
 
-
     private fun navigateToBookingInfoActivity(selectedTime: String, selectedDate: Long) {
         val intent: Intent
         if (auth.currentUser != null) {
@@ -148,5 +180,105 @@ class DayAndTimeForBookingAvailableActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isSunday(dateInMillis: Long): Boolean {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = dateInMillis
+        }
+        // Check if the day of the week is Sunday (Calendar.SUNDAY)
+        return calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+    }
+
+    private fun isSaturday(dateInMillis: Long): Boolean {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = dateInMillis
+        }
+        // Check if the day of the week is Saturday (Calendar.SATURDAY)
+        return calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
+    }
+
+    private fun listenForBookingChanges(selectedDate: Long, buttonContainer: LinearLayout) {
+        val formattedDate = formatDate(selectedDate)
+
+        // Create a reference to the Firestore collection for AllBookings
+        val allBookingsCollection = firestore.collection("AllBookings")
+            .whereEqualTo("selectedDate", formattedDate)
+
+        // Add a snapshot listener to the AllBookings collection
+        allBookingsCollection.addSnapshotListener { value, error ->
+            if (error != null) {
+                showToast("Error listening for booking changes: ${error.message}")
+                return@addSnapshotListener
+            }
+
+            // Update UI based on changes in the AllBookings collection
+            value?.let { snapshot ->
+                for (i in 0 until buttonContainer.childCount) {
+                    val button: Button = buttonContainer.getChildAt(i) as Button
+                    val buttonTime = button.text.toString()
+
+                    // Check if the current button time is booked
+                    val isBooked = snapshot.documents.any { it["selectedTime"] == buttonTime }
+
+                    if (isBooked) {
+                        // The time is booked, disable button and change color
+                        button.isEnabled = false
+                        button.setBackgroundColor(Color.RED)
+                    } else {
+                        // The time is not booked, enable button and reset color
+                        button.isEnabled = true
+                        button.setBackgroundColor(Color.BLACK) // Set to your original color
+                    }
+                }
+            }
+
+            // Handle deletions from AllBookings
+            val documentChanges = value?.documentChanges
+            documentChanges?.forEach { documentChange ->
+                if (documentChange.type == DocumentChange.Type.REMOVED) {
+                    val removedDocument = documentChange.document
+                    val removedTime = removedDocument["selectedTime"] as String
+
+                    // Delete the corresponding document from UserBookings
+                    deleteDocumentFromUserBookings(removedTime, formattedDate)
+                }
+            }
+        }
+    }
+
+    private fun deleteDocumentFromUserBookings(selectedTime: String, selectedDate: String) {
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            val uid = currentUser.uid
+
+            // Query Firestore to get the document ID to delete from UserBookings
+            firestore.collection("UsersBookings")
+                .document(uid)
+                .collection("UserBookings")
+                .whereEqualTo("selectedDate", selectedDate)
+                .whereEqualTo("selectedTime", selectedTime)
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        // Delete the document from UserBookings
+                        firestore.collection("UsersBookings")
+                            .document(uid)
+                            .collection("UserBookings")
+                            .document(document.id)
+                            .delete()
+                            .addOnSuccessListener {
+                                showToast("Document deleted from UserBookings")
+                            }
+                            .addOnFailureListener { e ->
+                                showToast("Error deleting document from UserBookings: ${e.message}")
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    showToast("Error querying UserBookings: ${e.message}")
+                }
+        }
     }
 }
