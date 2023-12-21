@@ -38,13 +38,12 @@ class CustomerAccount : AppCompatActivity() {
         // Call the function to get user bookings
         getUserBookings(currentUser.uid)
     }
-
     private fun getUserInformation(uid: String) {
         val db = Firebase.firestore
         val userRef = db.collection("Users").document(uid)
 
-        userRef.get().addOnSuccessListener { document ->
-            if (document.exists()) {
+        userRef.addSnapshotListener { document, e ->
+            if (document != null && document.exists()) {
                 val user = document.toObject<User>()
                 if (user != null) {
                     // Display the specific information about the logged-in user
@@ -52,12 +51,11 @@ class CustomerAccount : AppCompatActivity() {
                     userNameTextView.text = "Name: ${user.firstName} ${user.lastName}\n\nE-post: ${user.email}\n\nTel: 0${user.phoneNumber}"
                 }
             } else {
-                Log.d("!!!", "User document does not exist")
+                Log.e("!!!", "Error fetching user data: $e")
             }
-        }.addOnFailureListener { e ->
-            Log.e("!!!", "Error fetching user data: $e")
         }
     }
+
 
     private fun getUserBookings(uid: String) {
         val db = Firebase.firestore
