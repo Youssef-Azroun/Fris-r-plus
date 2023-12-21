@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import com.google.firebase.firestore.DocumentChange
 
 
 class DayAndTimeForBookingAvailableActivity : AppCompatActivity() {
@@ -232,53 +231,6 @@ class DayAndTimeForBookingAvailableActivity : AppCompatActivity() {
                     }
                 }
             }
-
-            // Handle deletions from AllBookings
-            val documentChanges = value?.documentChanges
-            documentChanges?.forEach { documentChange ->
-                if (documentChange.type == DocumentChange.Type.REMOVED) {
-                    val removedDocument = documentChange.document
-                    val removedTime = removedDocument["selectedTime"] as String
-
-                    // Delete the corresponding document from UserBookings
-                    deleteDocumentFromUserBookings(removedTime, formattedDate)
-                }
-            }
-        }
-    }
-
-    private fun deleteDocumentFromUserBookings(selectedTime: String, selectedDate: String) {
-        val currentUser = auth.currentUser
-
-        if (currentUser != null) {
-            val uid = currentUser.uid
-
-            // Query Firestore to get the document ID to delete from UserBookings
-            firestore.collection("UsersBookings")
-                .document(uid)
-                .collection("UserBookings")
-                .whereEqualTo("selectedDate", selectedDate)
-                .whereEqualTo("selectedTime", selectedTime)
-                .get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        // Delete the document from UserBookings
-                        firestore.collection("UsersBookings")
-                            .document(uid)
-                            .collection("UserBookings")
-                            .document(document.id)
-                            .delete()
-                            .addOnSuccessListener {
-                                showToast("Document deleted from UserBookings")
-                            }
-                            .addOnFailureListener { e ->
-                                showToast("Error deleting document from UserBookings: ${e.message}")
-                            }
-                    }
-                }
-                .addOnFailureListener { e ->
-                    showToast("Error querying UserBookings: ${e.message}")
-                }
         }
     }
 }
