@@ -34,14 +34,14 @@ class BookingConfirmationActivity : AppCompatActivity() {
         val selectedDateTextView: TextView = findViewById(R.id.textView13)
 
         // Update TextView elements with the retrieved information
-        firstNameTextView.text = "First Name: $firstName"
-        lastNameTextView.text = "Last Name: $lastName"
-        numberTextView.text = "Number: $number"
-        emailTextView.text = "Email: $email"
-        typeOfCutTextView.text = "Type of Cut: $typeOfCut"
-        priceTextView.text = "Price: $price"
-        selectedTimeTextView.text = "Selected Time: $selectedTime"
-        selectedDateTextView.text = "Selected Date: ${formatDate(selectedDate)}"
+        firstNameTextView.text = "Förnamn: $firstName"
+        lastNameTextView.text = "Eftername: $lastName"
+        numberTextView.text = "Telefonnummer: $number"
+        emailTextView.text = "E-post: $email"
+        typeOfCutTextView.text = "Type: $typeOfCut"
+        priceTextView.text = "Pris: $price"
+        selectedTimeTextView.text = "Tid: $selectedTime"
+        selectedDateTextView.text = "Datum: ${formatDate(selectedDate)}"
     }
 
     private fun formatDate(dateInMillis: Long): String {

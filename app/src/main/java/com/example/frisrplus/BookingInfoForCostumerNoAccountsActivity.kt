@@ -37,10 +37,10 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
         val selectedDate: Long = intent.getLongExtra("selectedDate", 0L)
 
         // Update TextView elements with the retrieved information
-        typeOfCutTextView.text = "Type of Cut: $typeOfCut"
-        priceTextView.text = "Price: $price"
-        selectedTimeTextView.text = "Selected Time: $selectedTime"
-        selectedDateTextView.text = "Selected Date: ${formatDate(selectedDate)}"
+        typeOfCutTextView.text = "Type: $typeOfCut"
+        priceTextView.text = "Pris: $price"
+        selectedTimeTextView.text = "Tid: $selectedTime"
+        selectedDateTextView.text = "Datum: ${formatDate(selectedDate)}"
 
         // Find Button element in your layout
         val button: Button = findViewById(R.id.button)
