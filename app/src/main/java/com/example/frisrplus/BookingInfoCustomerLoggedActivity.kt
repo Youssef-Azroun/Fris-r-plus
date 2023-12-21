@@ -189,7 +189,7 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
                         if (user != null) {
                             userEmailTextView.text = "Email: ${user.email}"
                             firstNameTextView.text = "Name: ${user.firstName} ${user.lastName}"
-                            phoneNumberTextView.text = "Phone Number: 0${user.phoneNumber}"
+                            phoneNumberTextView.text = "Telefonnummer: 0${user.phoneNumber}"
                         }
                     }
                 }
