@@ -11,6 +11,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 
 class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
 
@@ -63,8 +66,11 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         bokaButton.setOnClickListener {
             // Handle the "Boka" button click
             saveBookingToFirestore()
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            val currentUser = auth.currentUser
+            val userEmail = currentUser?.email ?: "N/A" // Use "N/A" if email is not available
+
+// Show the booking confirmation alert with the user's email
+            showBookingConfirmationAlert(this, userEmail)
         }
 
         // Fetch and display user information from Firestore
@@ -147,7 +153,24 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         }
     }
 
+    fun showBookingConfirmationAlert(context: Context, userEmail: String) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
 
+        // Set the alert message with the user's email
+        val message = "Tack för din bokning hos oss Frisör plus. Du kommer inom kort få en bokning bekräftelse skickas till $userEmail."
+        alertDialogBuilder.setMessage(message)
+
+        // Set the "Okej" button and its click listener
+        alertDialogBuilder.setPositiveButton("Okej") { dialogInterface: DialogInterface, _: Int ->
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            dialogInterface.dismiss()
+        }
+
+        // Create and show the alert dialog
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 
 
 
