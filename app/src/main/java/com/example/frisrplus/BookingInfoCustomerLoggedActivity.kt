@@ -49,7 +49,7 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         val selectedDate: Long = intent.getLongExtra("selectedDate", 0L)
 
         // Update the selectedDateTextView with the formatted date
-        selectedDateTextView.text = "Selected Date: ${formatDate(selectedDate)}"
+        selectedDateTextView.text = "Datum: ${formatDate(selectedDate)}"
 
         // Update your UI elements with the information
         val typeOfCutTextView: TextView = findViewById(R.id.typeOfCutTextView)

@@ -36,7 +36,7 @@
         android:background="@color/light_gray"
         android:drawableLeft="@drawable/baseline_edit_24"
         android:drawablePadding="10dp"
-        android:hint="Ange Ffternamn"
+        android:hint="Ange Efternamn"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

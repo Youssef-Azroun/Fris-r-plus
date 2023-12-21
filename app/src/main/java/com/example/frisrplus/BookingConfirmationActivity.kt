@@ -1,6 +1,8 @@
 package com.example.frisrplus
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import java.text.SimpleDateFormat
@@ -24,18 +26,16 @@ class BookingConfirmationActivity : AppCompatActivity() {
         val selectedDate: Long = intent.getLongExtra("selectedDate", 0L)
 
         // Find TextView elements in your layout
-        val firstNameTextView: TextView = findViewById(R.id.textView6)
-        val lastNameTextView: TextView = findViewById(R.id.textView7)
-        val numberTextView: TextView = findViewById(R.id.textView8)
-        val emailTextView: TextView = findViewById(R.id.textView9)
-        val typeOfCutTextView: TextView = findViewById(R.id.textView10)
-        val priceTextView: TextView = findViewById(R.id.textView11)
-        val selectedTimeTextView: TextView = findViewById(R.id.textView12)
-        val selectedDateTextView: TextView = findViewById(R.id.textView13)
+        val firstNameTextView: TextView = findViewById(R.id.textViewFirstName)
+        val numberTextView: TextView = findViewById(R.id.textViewNumber)
+        val emailTextView: TextView = findViewById(R.id.textViewEmail)
+        val typeOfCutTextView: TextView = findViewById(R.id.textViewType)
+        val priceTextView: TextView = findViewById(R.id.textViewForPrice)
+        val selectedTimeTextView: TextView = findViewById(R.id.textViewTime)
+        val selectedDateTextView: TextView = findViewById(R.id.textViewDay)
 
         // Update TextView elements with the retrieved information
-        firstNameTextView.text = "Förnamn: $firstName"
-        lastNameTextView.text = "Eftername: $lastName"
+        firstNameTextView.text = "Name: ${firstName} ${lastName}"
         numberTextView.text = "Telefonnummer: $number"
         emailTextView.text = "E-post: $email"
         typeOfCutTextView.text = "Type: $typeOfCut"
@@ -50,5 +50,11 @@ class BookingConfirmationActivity : AppCompatActivity() {
         // For demonstration purposes, we'll use a basic format here
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date(dateInMillis))
+    }
+
+    fun goToFirstMainActivity(view : View){
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
     }
 }
