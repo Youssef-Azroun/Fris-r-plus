@@ -7,6 +7,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -84,9 +86,55 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
             intent.putExtra("selectedDate", selectedDate)  // Include the selected date
 
             // Start BookingConfirmationActivity with the Intent
+            saveBookingToAllBookings()
             startActivity(intent)
+            finish()
         }
     }
+    private fun saveBookingToAllBookings() {
+        val typeOfCut: String? = intent.getStringExtra("typeOfCut")
+        val price: String? = intent.getStringExtra("price")
+        val selectedTime: String? = intent.getStringExtra("selectedTime")
+        val selectedDateMillis: Long = intent.getLongExtra("selectedDate", 0L)
+        val db = Firebase.firestore
+
+        // Convert the selectedDateMillis to a formatted date string
+        val selectedDateString = formatDate(selectedDateMillis)
+
+        // Get user input from EditText elements
+        val firstName: String = findViewById<EditText>(R.id.editTextFirstName).text.toString()
+        val lastName: String = findViewById<EditText>(R.id.editTextlastName).text.toString()
+        val phoneNumber: String = findViewById<EditText>(R.id.editTextNummber).text.toString()
+        val email: String = findViewById<EditText>(R.id.editTextEmail).text.toString()
+
+        // Validate user input (similar to your existing validation logic)
+
+        // User is not authenticated, proceed to save the booking data without user information
+        val userBookingData = hashMapOf(
+            "typeOfCut" to typeOfCut,
+            "price" to price,
+            "selectedTime" to selectedTime,
+            "selectedDate" to selectedDateString,
+            "firstName" to firstName, // Add first name
+            "lastName" to lastName,   // Add last name
+            "phoneNumber" to phoneNumber,   // Add phone number
+            "email" to email
+            // You may omit the email or add other information as needed
+        )
+
+        // Save the booking data to the AllBookings collection with the unique document ID
+        db.collection("AllBookings")
+            .document()
+            .set(userBookingData)
+            .addOnSuccessListener {
+                showToast("Booking information saved to AllBookings successfully")
+            }
+            .addOnFailureListener { e ->
+                showToast("Error saving booking information to AllBookings: ${e.message}")
+            }
+    }
+
+
     private fun formatDate(dateInMillis: Long): String {
         // Implement your logic to format the date as needed
         // For example, you can use SimpleDateFormat
