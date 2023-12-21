@@ -21,14 +21,9 @@ class CustomerBookingRecycleAdapter(private val context: Context, private val us
         val userBooking = userBookings[position]
 
         // Populate your ViewHolder views with data from userBooking
-        holder.emailTextView.text = userBooking.email
-        holder.firstNameTextView.text = userBooking.firstName
-        holder.lastNameTextView.text = userBooking.lastName
-        holder.phoneNumberTextView.text = userBooking.phoneNumber.toString()
-        holder.priceTextView.text = userBooking.price.toString()
-        holder.dateTextView.text = userBooking.selectedDate
-        holder.timeTextView.text = userBooking.selectedTime
-        holder.cutTypeTextView.text = userBooking.typeOfCut
+        holder.custumerBookingInfoTextView.text = "Name: ${userBooking.firstName} ${userBooking.lastName}\nE-post: ${userBooking.email}\n" +
+                                    "Tel: 0${userBooking.phoneNumber.toString()}\nPris: ${userBooking.price.toString()}" +
+                                     "\nDatum: ${userBooking.selectedDate}\nTid: ${userBooking.selectedTime}\nTyp: ${userBooking.typeOfCut}"
     }
 
     override fun getItemCount(): Int {
@@ -36,13 +31,6 @@ class CustomerBookingRecycleAdapter(private val context: Context, private val us
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val emailTextView: TextView = itemView.findViewById(R.id.emailTextView)
-        val firstNameTextView: TextView = itemView.findViewById(R.id.firstNameTextView)
-        val lastNameTextView: TextView = itemView.findViewById(R.id.lastNameTextView)
-        val phoneNumberTextView: TextView = itemView.findViewById(R.id.phoneNumberTextView)
-        val priceTextView: TextView = itemView.findViewById(R.id.priceTextView)
-        val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
-        val timeTextView: TextView = itemView.findViewById(R.id.timeTextView)
-        val cutTypeTextView: TextView = itemView.findViewById(R.id.cutTypeTextView)
+        val custumerBookingInfoTextView: TextView = itemView.findViewById(R.id.custumerBookingInfoTextView)
     }
 }

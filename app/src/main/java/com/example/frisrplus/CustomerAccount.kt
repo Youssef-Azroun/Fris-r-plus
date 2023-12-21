@@ -49,7 +49,7 @@ class CustomerAccount : AppCompatActivity() {
                 if (user != null) {
                     // Display the specific information about the logged-in user
                     val userNameTextView: TextView = findViewById(R.id.textViewMyname)
-                    userNameTextView.text = "${user.firstName} ${user.lastName}\n\n${user.email}\n\n0${user.phoneNumber}"
+                    userNameTextView.text = "Name: ${user.firstName} ${user.lastName}\n\nE-post: ${user.email}\n\nTel: 0${user.phoneNumber}"
                 }
             } else {
                 Log.d("!!!", "User document does not exist")
