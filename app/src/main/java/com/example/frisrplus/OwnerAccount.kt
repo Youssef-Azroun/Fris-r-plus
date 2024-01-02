@@ -17,11 +17,28 @@ class OwnerAccount : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_owner_account)
 
-        // Fetch data from Firestore
-        fetchDataFromFirestore()
+        // get all bookings from firestore
+        getAllBookings()
     }
 
-    private fun fetchDataFromFirestore() {
+    private fun getAllBookings() {
+        val bookingsRef = db.collection("AllBookings")
+        bookingsRef.addSnapshotListener { snapshot, e ->
+            if (snapshot != null) {
+                val userBookings = mutableListOf<UserBooking>()
+                for (document in snapshot.documents) {
+                    val booking = document.toObject<UserBooking>()
+                    if (booking != null) {
+                        userBookings.add(booking)
+                    }
+                }
+                // Update the RecyclerView with the new data
+                updateAllBookingRecyclerView(userBookings)
+            }
+        }
+    }
+
+    /*private fun fetchDataFromFirestore() {
         db.collection("AllBookings")
             .get()
             .addOnSuccessListener { result ->
@@ -38,7 +55,7 @@ class OwnerAccount : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Log.w("Firestore", "Error getting documents.", exception)
             }
-    }
+    }*/
 
     private fun removeItem(position: Int) {
         // Implement logic to remove the item at the given position
