@@ -84,7 +84,7 @@ class CustomerAccount : AppCompatActivity() {
     }
 
     private fun updateRecyclerView(userBookings: List<UserBooking>) {
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val recyclerView = findViewById<RecyclerView>(R.id.customerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
