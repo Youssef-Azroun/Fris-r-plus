@@ -1,28 +1,42 @@
 package com.example.frisrplus
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LogIn : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_in)
 
         auth = FirebaseAuth.getInstance()
+        sharedPreferences = getSharedPreferences("userPrefs", Context.MODE_PRIVATE)
 
         setupLoginAndRegisterButtons()
+    }
 
+    private fun saveAdminFlag(isAdmin: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isAdmin", isAdmin)
+        editor.apply()
+    }
+
+    private fun isAdmin(): Boolean {
+        return sharedPreferences.getBoolean("isAdmin", false)
     }
 
     private fun setupLoginAndRegisterButtons() {
@@ -49,32 +63,45 @@ class LogIn : AppCompatActivity() {
     }
 
     private fun loginUser(email: String, password: String) {
-        // Convert the provided email to lowercase for case-insensitive comparison
-        val lowercaseEmail = email.toLowerCase()
-
-        // Check if the user is logging in with the specified credentials
-        if (lowercaseEmail == "frisorplus@gmail.com" && password == "adminfp4312") {
-            // Navigate to OwnerAccount activity
-            startActivity(Intent(this, OwnerAccount::class.java))
-            // Finish the current activity to prevent the user from coming back to the login screen
-            finish()
-            return
-        }
-
-        // For other logins, proceed with Firebase Authentication
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null && user.isEmailVerified) {
-                        // Login successful and email is verified
-                        showToast("Inloggning lyckades.")
-
-                        // Redirect to MainActivity
-                        startActivity(Intent(this, MainActivity::class.java))
-
-                        // Finish the current activity to prevent the user from coming back to the login screen
-                        finish()
+                        // Retrieve user data from Firestore
+                        FirebaseFirestore.getInstance().collection("Users")
+                            .document(user.uid)
+                            .get()
+                            .addOnSuccessListener { document ->
+                                if (document.exists()) {
+                                    val userData = document.toObject(User::class.java)
+                                    userData?.let {
+                                        if (it.admin == true) {
+                                            // Save admin flag in SharedPreferences
+                                            saveAdminFlag(true)
+                                            // User is an admin, navigate to OwnerAccount
+                                            startActivity(Intent(this, OwnerAccount::class.java))
+                                            // Finish the current activity to prevent the user from coming back to the login screen
+                                            finish()
+                                        } else {
+                                            // Save admin flag in SharedPreferences
+                                            saveAdminFlag(false)
+                                            // User is not an admin, navigate to MainActivity
+                                            startActivity(Intent(this, MainActivity::class.java))
+                                            // Finish the current activity to prevent the user from coming back to the login screen
+                                            finish()
+                                        }
+                                    }
+                                } else {
+                                    // User data not found in Firestore
+                                    showToast("User data not found.")
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                // Handle Firestore query failure
+                                showToast("Failed to retrieve user data from Firestore.")
+                                Log.e("LoginActivity", "Error getting user data", exception)
+                            }
                     } else {
                         // If the user is not verified, show a message
                         showToast("Var god verifiera din e-post innan du loggar in.")
@@ -85,9 +112,6 @@ class LogIn : AppCompatActivity() {
                 }
             }
     }
-
-
-
 
     private fun handleLoginFailure(exception: Exception?) {
         when (exception) {
@@ -101,3 +125,5 @@ class LogIn : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
+
+
