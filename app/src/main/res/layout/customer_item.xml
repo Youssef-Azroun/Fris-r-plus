@@ -10,7 +10,6 @@
         android:id="@+id/custumerBookingInfoTextView"
         android:layout_width="374dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="10dp"
         android:background="@color/transparent_gray"
@@ -20,6 +19,7 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
