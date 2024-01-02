@@ -34,10 +34,10 @@ class CustomerAccount : AppCompatActivity() {
         }
 
         //set up cancel button
-        val cancelButton: Button = findViewById(R.id.cancelButton)
-        cancelButton.setOnClickListener {
+       // val cancelButton: Button = findViewById(R.id.cancelButton)
+        //cancelButton.setOnClickListener {
 
-        }
+       // }
 
         // Get user information
         getUserInformation(currentUser.uid)
@@ -87,7 +87,6 @@ class CustomerAccount : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings)
         recyclerView.adapter = adapter
-        // You may also want to set a layout manager, e.g., LinearLayoutManager
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
