@@ -2,62 +2,63 @@ package com.example.frisrplus
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 
 class OwnerAccount : AppCompatActivity() {
-    private var isAdmin: Boolean = false
+    private var isAdmin: Boolean = true
+    private val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_owner_account)
 
-
-
-        getAllBookings()
+        // Fetch data from Firestore
+        fetchDataFromFirestore()
     }
 
-
-    private fun getAllBookings() {
-        val db = Firebase.firestore
-        val allBookingRef = db.collection("AllBookings")
-
-        allBookingRef.addSnapshotListener { snapshot, e ->
-            if (snapshot != null) {
+    private fun fetchDataFromFirestore() {
+        db.collection("AllBookings")
+            .get()
+            .addOnSuccessListener { result ->
                 val userBookings = mutableListOf<UserBooking>()
-                for (document in snapshot.documents) {
+
+                for (document in result) {
                     val booking = document.toObject<UserBooking>()
-                    if (booking != null) {
-                        userBookings.add(booking)
-                    }
+                    userBookings.add(booking)
                 }
-                // Update the RecyclerView with the new data
-              updateAllBookingRecyclerView(userBookings)
+
+                // Update the RecyclerView with fetched data
+                updateAllBookingRecyclerView(userBookings)
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error getting documents.", exception)
+            }
     }
 
     private fun removeItem(position: Int) {
-        // Implementera logik för att ta bort objektet på den givna positionen från listan
+        // Implement logic to remove the item at the given position
     }
 
     private fun cancelBooking(position: Int) {
-        // Implementera avbokningslogik för objektet på den givna positionen
+        // Implement cancellation logic for the item at the given position
     }
 
     private fun updateAllBookingRecyclerView(userBookings: List<UserBooking>) {
-        val recyclerView = findViewById<RecyclerView>(R.id.customerRecyclerView)
+        val recyclerView = findViewById<RecyclerView>(R.id.ownerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings,
             object : ItemClickListener {
                 override fun onItemClick(position: Int) {
-                    // Implementera önskat beteende för knappklick beroende på användarens roll
+                    // Implement desired behavior for button click based on user role
                     if (isAdmin) {
-                        // Admin-beteende
+                        // Admin behavior
                         removeItem(position)
                     } else {
-                        // Kund-beteende
+                        // Customer behavior
                         cancelBooking(position)
                     }
                 }

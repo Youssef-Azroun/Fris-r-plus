@@ -109,15 +109,24 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
 
         // Validate user input (similar to your existing validation logic)
 
+        // Convert phoneNumber to Long
+        val phoneNumberLong: Long
+        try {
+            phoneNumberLong = phoneNumber.toLong()
+        } catch (e: NumberFormatException) {
+            showToast("Invalid phone number")
+            return
+        }
+
         // User is not authenticated, proceed to save the booking data without user information
         val userBookingData = hashMapOf(
             "typeOfCut" to typeOfCut,
             "price" to price,
             "selectedTime" to selectedTime,
             "selectedDate" to selectedDateString,
-            "firstName" to firstName, // Add first name
-            "lastName" to lastName,   // Add last name
-            "phoneNumber" to phoneNumber,   // Add phone number
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "phoneNumber" to phoneNumberLong, // Store phoneNumber as Long
             "email" to email
             // You may omit the email or add other information as needed
         )
@@ -133,6 +142,7 @@ class BookingInfoForCostumerNoAccountsActivity : AppCompatActivity() {
                 showToast("Error saving booking information to AllBookings: ${e.message}")
             }
     }
+
 
 
     private fun formatDate(dateInMillis: Long): String {
