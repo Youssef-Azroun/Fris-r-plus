@@ -49,6 +49,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAllBooking"
-        tools:listitem="@layout/owner_item" />
+        tools:listitem="@layout/customer_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
