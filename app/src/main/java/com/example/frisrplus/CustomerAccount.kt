@@ -19,6 +19,8 @@ class CustomerAccount : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
 
+    private var isAdmin: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_customer_account)
@@ -83,9 +85,29 @@ class CustomerAccount : AppCompatActivity() {
         }
     }
 
+    private fun removeItem(position: Int) {
+        // Implementera logik för att ta bort objektet på den givna positionen från listan
+    }
+
+    private fun cancelBooking(position: Int) {
+        // Implementera avbokningslogik för objektet på den givna positionen
+    }
     private fun updateRecyclerView(userBookings: List<UserBooking>) {
         val recyclerView = findViewById<RecyclerView>(R.id.customerRecyclerView)
-        val adapter = CustomerBookingRecycleAdapter(this, userBookings)
+        val adapter = CustomerBookingRecycleAdapter(this, userBookings,
+            object : ItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // Implementera önskat beteende för knappklick beroende på användarens roll
+                    if (isAdmin) {
+                        // Admin-beteende
+                        removeItem(position)
+                    } else {
+                        // Kund-beteende
+                        cancelBooking(position)
+                    }
+                }
+            },
+            isAdmin)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
