@@ -1,5 +1,6 @@
 package com.example.frisrplus
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,7 @@ class CustomerAccount : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
+    private var userBookings = listOf<UserBooking>()
 
     private var isAdmin: Boolean = false
 
@@ -72,39 +74,79 @@ class CustomerAccount : AppCompatActivity() {
 
         bookingsRef.addSnapshotListener { snapshot, e ->
             if (snapshot != null) {
-                val userBookings = mutableListOf<UserBooking>()
-                for (document in snapshot.documents) {
-                    val booking = document.toObject<UserBooking>()
+                userBookings = snapshot.documents.mapNotNull { document ->
+                    val booking = document.toObject(UserBooking::class.java)
                     if (booking != null) {
-                        userBookings.add(booking)
+                        // Set the bookingId property from the document ID
+                        booking.bookingId = document.id
+                        booking
+                    } else {
+                        null
                     }
                 }
+
                 // Update the RecyclerView with the new data
                 updateRecyclerView(userBookings)
             }
         }
     }
 
-    private fun cancelBooking(position: Int) {
-        // Implementera avbokningslogik för objektet på den givna positionen
+
+    private fun cancelBooking(userBooking: UserBooking) {
+        val uid = currentUser.uid
+
+        val bookingId = userBooking.bookingId ?: ""
+        Log.d("CancelBooking", "Canceling booking with ID: $bookingId")
+
+        if (bookingId.isNotEmpty()) {
+            // Reference to the specific booking document in Firestore
+            val bookingRef = Firebase.firestore.collection("UsersBookings")
+                .document(uid)
+                .collection("UserBookings")
+                .document(bookingId)
+
+            val bookingRef2 = Firebase.firestore.collection("AllBookings")
+                .document(bookingId)
+
+            // Delete the document from Firestore
+            bookingRef.delete()
+                .addOnSuccessListener {
+                    // Successfully deleted from Firestore, now update the local list
+                    val updatedUserBookings = userBookings.toMutableList()
+                    updatedUserBookings.remove(userBooking)
+                    updateRecyclerView(updatedUserBookings)
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CancelBooking", "Error deleting document: $e")
+                    // Handle the failure case if needed
+                }
+            bookingRef2.delete()
+
+
+        } else {
+            Log.e("CancelBooking", "Invalid bookingId - ${userBooking.bookingId}")
+        }
     }
+
 
     private fun updateRecyclerView(userBookings: List<UserBooking>) {
         val recyclerView = findViewById<RecyclerView>(R.id.customerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings,
             object : ItemClickListener {
-                override fun onItemClick(position: Int) {
-                    // Implementera önskat beteende för knappklick beroende på användarens roll
+                override fun onItemClick(userBooking: UserBooking) {
+                    // Implement desired behavior for button click based on user role
                     if (!isAdmin) {
-                        // Admin-beteende
-                        cancelBooking(position)
+                        // Admin behavior
+                        showConfirmationDialog(userBooking)
                     }
                 }
             },
-            isAdmin)
+            isAdmin
+        )
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
+
 
     private fun logout() {
         // Log out the user using Firebase Authentication
@@ -117,5 +159,26 @@ class CustomerAccount : AppCompatActivity() {
 
         // Finish the current activity to prevent the user from coming back to the logged-in state
         finish()
+    }
+
+
+
+    private fun showConfirmationDialog(userBooking: UserBooking) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Bekräfta avbokning")
+        alertDialogBuilder.setMessage("Är du säkert på att du vill avboka din tid hos frisör plus?")
+
+        alertDialogBuilder.setPositiveButton("Ja") { _, _ ->
+            // User clicked "Yes", handle the cancellation
+            cancelBooking(userBooking)
+        }
+
+        alertDialogBuilder.setNegativeButton("Avbryt") { dialog, _ ->
+            // User clicked "Cancel", dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

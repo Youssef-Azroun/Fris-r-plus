@@ -18,7 +18,7 @@ class OwnerAccount : AppCompatActivity() {
     private val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
-    private val userBookings = mutableListOf<UserBooking>()
+    private var userBookings = mutableListOf<UserBooking>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,35 +38,63 @@ class OwnerAccount : AppCompatActivity() {
     }
 
     private fun getAllBookings() {
+        val db = Firebase.firestore
         val bookingsRef = db.collection("AllBookings")
+
         bookingsRef.addSnapshotListener { snapshot, e ->
             if (snapshot != null) {
-                userBookings.clear()
-                //val userBookings = mutableListOf<UserBooking>()
-                for (document in snapshot.documents) {
-                    val booking = document.toObject<UserBooking>()
+                userBookings = snapshot.documents.mapNotNull { document ->
+                    val booking = document.toObject(UserBooking::class.java)
                     if (booking != null) {
-                        userBookings.add(booking)
+                        // Set the bookingId property from the document ID
+                        booking.bookingId = document.id
+                        booking
+                    } else {
+                        null
                     }
-                }
+                }.toMutableList()
+
+
                 // Update the RecyclerView with the new data
                 updateAllBookingRecyclerView(userBookings)
             }
         }
     }
 
-    private fun removeItem(position: Int) {
-        if (position in 0 until userBookings.size) {
-            val userBookingToRemove = userBookings[position]
+    private fun removeItem(userBooking: UserBooking) {
+        val uid = currentUser.uid
 
-            // Remove the booking from Firestore
-            val bookingsRef = db.collection("AllBookings")
-            bookingsRef.document(userBookingToRemove.firstName.toString()).delete()
+        val bookingId = userBooking.bookingId ?: ""
+        Log.d("CancelBooking", "Canceling booking with ID: $bookingId")
+
+        if (bookingId.isNotEmpty()) {
+            // Reference to the specific booking document in Firestore
+            val bookingRef = db
+                .collection("AllBookings")
+                .document(bookingId)
+
+            val bookingRef2 = db.collection("UsersBookings")
+                .document(uid)
+                .collection("UserBookings")
+                .document(bookingId)
+
+            // Delete the document from Firestore
+            bookingRef.delete()
                 .addOnSuccessListener {
                     // Successfully deleted from Firestore, now update the local list
-                    userBookings.removeAt(position)
-                    updateAllBookingRecyclerView(userBookings)
+                    val updatedUserBookings = userBookings.toMutableList()
+                    updatedUserBookings.remove(userBooking)
+                    updateAllBookingRecyclerView(updatedUserBookings)
                 }
+                .addOnFailureListener { e ->
+                    Log.e("CancelBooking", "Error deleting document: $e")
+                    // Handle the failure case if needed
+                }
+            bookingRef2.delete()
+
+
+        } else {
+            Log.e("CancelBooking", "Invalid bookingId - ${userBooking.bookingId}")
         }
     }
 
@@ -74,11 +102,11 @@ class OwnerAccount : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.ownerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings,
             object : ItemClickListener {
-                override fun onItemClick(position: Int) {
+                override fun onItemClick(userBooking: UserBooking) {
                     // Implement desired behavior for button click based on user role
                     if (isAdmin) {
                         // Admin behavior
-                        removeItem(position)
+                        removeItem(userBooking)
                     }
                 }
             },
