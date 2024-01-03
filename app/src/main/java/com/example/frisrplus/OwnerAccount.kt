@@ -18,6 +18,7 @@ class OwnerAccount : AppCompatActivity() {
     private val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
+    private val userBookings = mutableListOf<UserBooking>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,8 @@ class OwnerAccount : AppCompatActivity() {
         val bookingsRef = db.collection("AllBookings")
         bookingsRef.addSnapshotListener { snapshot, e ->
             if (snapshot != null) {
-                val userBookings = mutableListOf<UserBooking>()
+                userBookings.clear()
+                //val userBookings = mutableListOf<UserBooking>()
                 for (document in snapshot.documents) {
                     val booking = document.toObject<UserBooking>()
                     if (booking != null) {
@@ -54,11 +56,18 @@ class OwnerAccount : AppCompatActivity() {
     }
 
     private fun removeItem(position: Int) {
-        // Implement logic to remove the item at the given position
-    }
+        if (position in 0 until userBookings.size) {
+            val userBookingToRemove = userBookings[position]
 
-    private fun cancelBooking(position: Int) {
-        // Implement cancellation logic for the item at the given position
+            // Remove the booking from Firestore
+            val bookingsRef = db.collection("AllBookings")
+            bookingsRef.document(userBookingToRemove.firstName.toString()).delete()
+                .addOnSuccessListener {
+                    // Successfully deleted from Firestore, now update the local list
+                    userBookings.removeAt(position)
+                    updateAllBookingRecyclerView(userBookings)
+                }
+        }
     }
 
     private fun updateAllBookingRecyclerView(userBookings: List<UserBooking>) {
@@ -70,9 +79,6 @@ class OwnerAccount : AppCompatActivity() {
                     if (isAdmin) {
                         // Admin behavior
                         removeItem(position)
-                    } else {
-                        // Customer behavior
-                        cancelBooking(position)
                     }
                 }
             },
