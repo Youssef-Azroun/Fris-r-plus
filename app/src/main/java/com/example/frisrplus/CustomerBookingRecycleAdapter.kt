@@ -9,8 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 interface ItemClickListener {
-    fun onItemClick(position: Int)
+    fun onItemClick(userBooking: UserBooking)
 }
+
 
 class CustomerBookingRecycleAdapter(private val context: Context,
                                     private val userBookings: List<UserBooking>,
@@ -37,7 +38,7 @@ class CustomerBookingRecycleAdapter(private val context: Context,
 
         // Klickhanterare för knappen
         holder.cancelButton.setOnClickListener {
-            itemClickListener.onItemClick(position)
+            itemClickListener.onItemClick(userBooking)
         }
 
         // Populate your ViewHolder views with data from userBooking
