@@ -102,7 +102,7 @@ class OwnerAccount : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.ownerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings,
             object : ItemClickListener {
-                override fun onItemClick(userBooking: UserBooking) {
+                override fun onItemClick(userBooking: UserBooking, buttonText: String) {
                     // Implement desired behavior for button click based on user role
                     if (isAdmin) {
                         // Admin behavior

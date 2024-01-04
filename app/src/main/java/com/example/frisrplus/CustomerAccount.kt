@@ -133,11 +133,15 @@ class CustomerAccount : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.customerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings,
             object : ItemClickListener {
-                override fun onItemClick(userBooking: UserBooking) {
+                override fun onItemClick(userBooking: UserBooking, buttonText: String) {
                     // Implement desired behavior for button click based on user role
                     if (!isAdmin) {
                         // Admin behavior
-                        showConfirmationDialog(userBooking)
+                        if (buttonText == "Avboka") {
+                            showConfirmationDialog(userBooking)
+                        }else if(buttonText == "Ta bort") {
+                            cancelBooking(userBooking)
+                        }
                     }
                 }
             },
@@ -146,6 +150,7 @@ class CustomerAccount : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
+
 
 
     private fun logout() {
