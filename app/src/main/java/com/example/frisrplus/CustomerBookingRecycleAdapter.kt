@@ -12,8 +12,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 interface ItemClickListener {
-    fun onItemClick(userBooking: UserBooking)
+    fun onItemClick(userBooking: UserBooking, buttonText: String)
 }
+
 
 
 class CustomerBookingRecycleAdapter(private val context: Context,
@@ -42,8 +43,9 @@ class CustomerBookingRecycleAdapter(private val context: Context,
 
         // Klickhanterare för knappen
         holder.cancelButton.setOnClickListener {
-            itemClickListener.onItemClick(userBooking)
+            itemClickListener.onItemClick(userBooking, holder.cancelButton.text.toString())
         }
+
 
         // Populate your ViewHolder views with data from userBooking
         holder.custumerBookingInfoTextView.text = "Name: ${userBooking.firstName} ${userBooking.lastName}\nE-post: ${userBooking.email}\n" +
