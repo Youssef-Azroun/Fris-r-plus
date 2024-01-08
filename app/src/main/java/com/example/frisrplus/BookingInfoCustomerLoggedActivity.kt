@@ -157,7 +157,7 @@ class BookingInfoCustomerLoggedActivity : AppCompatActivity() {
         val alertDialogBuilder = AlertDialog.Builder(context)
 
         // Set the alert message with the user's email
-        val message = "Tack för din bokning hos oss Frisör plus. Du kommer inom kort få en bokning bekräftelse skickas till $userEmail."
+        val message = "Tack för din bokning hos oss Frisör plus. Du kommer ser din bokning på mitt konto sida"
         alertDialogBuilder.setMessage(message)
 
         // Set the "Okej" button and its click listener
