@@ -37,11 +37,12 @@ class CustomerAccount : AppCompatActivity() {
             logout()
         }
 
-        //set up cancel button
-       // val cancelButton: Button = findViewById(R.id.cancelButton)
-        //cancelButton.setOnClickListener {
-
-       // }
+        //Set up Edit button
+        val editTextView: TextView = findViewById(R.id.editTextView)
+        editTextView.setOnClickListener {
+            // Call the editProfile function
+            goToEditProfileActivity()
+        }
 
         // Get user information
         getUserInformation(currentUser.uid)
@@ -49,6 +50,12 @@ class CustomerAccount : AppCompatActivity() {
         // Call the function to get user bookings
         getUserBookings(currentUser.uid)
     }
+
+    private fun goToEditProfileActivity() {
+        val intent = Intent(this, EditProfileActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun getUserInformation(uid: String) {
         val db = Firebase.firestore
         val userRef = db.collection("Users").document(uid)
@@ -66,7 +73,6 @@ class CustomerAccount : AppCompatActivity() {
             }
         }
     }
-
 
     private fun getUserBookings(uid: String) {
         val db = Firebase.firestore
@@ -90,7 +96,6 @@ class CustomerAccount : AppCompatActivity() {
             }
         }
     }
-
 
     private fun cancelBooking(userBooking: UserBooking) {
         val uid = currentUser.uid
@@ -128,7 +133,6 @@ class CustomerAccount : AppCompatActivity() {
         }
     }
 
-
     private fun updateRecyclerView(userBookings: List<UserBooking>) {
         val recyclerView = findViewById<RecyclerView>(R.id.customerRecyclerView)
         val adapter = CustomerBookingRecycleAdapter(this, userBookings,
@@ -151,8 +155,6 @@ class CustomerAccount : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-
-
     private fun logout() {
         // Log out the user using Firebase Authentication
         auth.signOut()
@@ -165,8 +167,6 @@ class CustomerAccount : AppCompatActivity() {
         // Finish the current activity to prevent the user from coming back to the logged-in state
         finish()
     }
-
-
 
     private fun showConfirmationDialog(userBooking: UserBooking) {
         val alertDialogBuilder = AlertDialog.Builder(this)

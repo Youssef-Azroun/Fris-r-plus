@@ -83,4 +83,14 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewMyBooking"
         tools:listitem="@layout/customer_item" />
 
+    <TextView
+        android:id="@+id/editTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:drawableLeft="@drawable/outline_edit_24"
+        app:layout_constraintEnd_toEndOf="@+id/textViewMyname"
+        app:layout_constraintTop_toTopOf="@+id/textViewMyname" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
