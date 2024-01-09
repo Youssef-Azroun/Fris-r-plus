@@ -17,52 +17,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logooo" />
 
-    <TextView
-        android:id="@+id/newFirstNameTextView"
-        android:layout_width="337dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="50dp"
-        android:background="@color/light_gray"
-        android:drawableLeft="@drawable/baseline_edit_24"
-        android:drawablePadding="10dp"
-        android:hint="Ange nya förnamn"
-        android:padding="15dp"
-        android:textColorHint="@color/mtrl_indicator_text_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
-
-    <TextView
-        android:id="@+id/newLastNameTextView"
-        android:layout_width="337dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="18dp"
-        android:background="@color/light_gray"
-        android:drawableLeft="@drawable/baseline_edit_24"
-        android:drawablePadding="10dp"
-        android:hint="Ange nya efternamn"
-        android:padding="15dp"
-        android:textColorHint="@color/mtrl_indicator_text_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newFirstNameTextView" />
-
-    <TextView
-        android:id="@+id/newPhoneNumberTextView"
-        android:layout_width="337dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="18dp"
-        android:background="@color/light_gray"
-        android:drawableLeft="@drawable/baseline_call_24"
-        android:drawablePadding="10dp"
-        android:hint="Ange nya telefonnummer"
-        android:inputType="number"
-        android:padding="15dp"
-        android:textColorHint="@color/mtrl_indicator_text_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newLastNameTextView" />
-
     <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
@@ -74,4 +28,55 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/newFirstNameEditText"
+        android:layout_width="337dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:background="@color/light_gray"
+        android:drawableLeft="@drawable/baseline_edit_24"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="Ange nya förnamn"
+        android:inputType="text"
+        android:padding="15dp"
+        android:textColorHint="@color/mtrl_indicator_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+
+    <EditText
+        android:id="@+id/newLastNameEditText"
+        android:layout_width="337dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/light_gray"
+        android:drawableLeft="@drawable/baseline_edit_24"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="Ange nya efternamn"
+        android:inputType="text"
+        android:padding="15dp"
+        android:textColorHint="@color/mtrl_indicator_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newFirstNameEditText" />
+
+    <EditText
+        android:id="@+id/newPhoneNumberEditText"
+        android:layout_width="337dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/light_gray"
+        android:drawableLeft="@drawable/baseline_call_24"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="Ange nya telefonnummer"
+        android:inputType="text"
+        android:padding="15dp"
+        android:textColorHint="@color/mtrl_indicator_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newLastNameEditText" />
 </androidx.constraintlayout.widget.ConstraintLayout>
